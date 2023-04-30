@@ -4,7 +4,7 @@ using System.Text;
 using Newtonsoft.Json;
 namespace ConverterValute
 {
-    class Valute
+    internal class Valute
     {
         [JsonProperty("ID")]
         public string ID { get; set; }
@@ -26,5 +26,10 @@ namespace ConverterValute
 
         [JsonProperty("Previous")]
         public double Previous { get; set; }
+
+        public override string ToString()
+        {
+            return $"{Name} - {CharCode}";
+        }
     }
 }

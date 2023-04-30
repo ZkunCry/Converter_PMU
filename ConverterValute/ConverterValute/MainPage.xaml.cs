@@ -14,6 +14,7 @@ namespace ConverterValute
         public MainPage()
         {
             InitializeComponent();
+            BindingContext = new ConverterViewModel();
         }
     }
 }

@@ -19,27 +19,34 @@ namespace ConverterValute
         public async Task<ValuteData> GetDateAsync(DateTime currentDate)
         {
             ValuteData ListValute = null;
-            string date = $"{currentDate:yyyy/MM/dd}".Replace(".", "//");
-            string GetData = $"{Url}/archive/{date}/daily_json.js";
-            try
+            string date = null;
+            string GetData = null;
+
+            for (DateTime newdate = currentDate; ListValute == null; newdate = newdate.AddDays(-1))
             {
-                ListValute = await GetData.GetJsonAsync<ValuteData>();
-            }
-            catch (FlurlHttpException exception)
-            {
-                if (exception.StatusCode != 404)
+                date = $"{newdate:yyyy/MM/dd}".Replace(".", "//");
+                GetData = $"{Url}/archive/{date}/daily_json.js";
+                try
                 {
-                    throw new Exception($"Error code: {exception.StatusCode}");
+                    ListValute = await GetData.GetJsonAsync<ValuteData>();
+                }
+                catch (FlurlHttpException exception)
+                {
+                    if (exception.StatusCode != 404)
+                    {
+                        throw new Exception($"Error code: {exception.StatusCode}");
+                    }
                 }
             }
-            ListValute?.Valute.Add("RUB", new Valute
-            {
-                CharCode = "RUB",
-                ID = "0",
-                Name = "Российский рубль",
-                Nominal = 1,
-                Value = 1.0,
-            });
+            if (ListValute != null)
+                ListValute.Valute.Add("RUB", new Valute
+                {
+                    CharCode = "RUB",
+                    ID = "0",
+                    Name = "Российский рубль",
+                    Nominal = 1,
+                    Value = 1.0,
+                });
             return ListValute;
         }
     }
