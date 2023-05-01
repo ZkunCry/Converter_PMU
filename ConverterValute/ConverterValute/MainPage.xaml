@@ -4,26 +4,53 @@
              x:Class="ConverterValute.MainPage">
     <StackLayout>
         <Label Text="Конвертер валют" FontSize="40" HorizontalTextAlignment="Center"/>
-        <Label Text="{Binding TextValuteCourse}"/>
-        <StackLayout>
-           
-            <Picker Title="Выберите валюту"
+  
+            <Grid Margin="0,0,0,20">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <Frame HasShadow="True" CornerRadius="20">
+                <Label HorizontalTextAlignment="Start" VerticalTextAlignment="Center" Grid.Row="0" Grid.Column="0" 
+                       Text="{Binding TextValuteCourse}" FontSize="15"/>
+            </Frame>
+            <DatePicker Format="D" FontSize="19" HorizontalOptions="Center" Grid.Row="0" Grid.Column="1"  Date="{Binding CurrentDate}"></DatePicker>
+            
+        </Grid>
+       
+            <StackLayout>
+            <Frame Margin="10">
+                <Picker  Title="Выберите валюту"
                     ItemsSource="{Binding ValuteList}"
                     SelectedItem="{Binding MainValute}"
                     />
-            <Label Text="{Binding TextFrom } "/>
-            <Entry Keyboard="Numeric" Text="{Binding EntryMain }"/>
- 
-           
+            </Frame>
+            <Frame Margin="10">
+                <StackLayout>
+                    <Entry Keyboard="Numeric" Text="{Binding EntryMain }"/>
+                    <Label Text="{Binding TextFrom } "/>
+                </StackLayout>
+            </Frame>
         </StackLayout>
-        <StackLayout>
-            <Picker Title="Выберите валюту"
+    
+       
+            <StackLayout>
+            <Frame Margin="10">
+                <Picker Title="Выберите валюту"
                     ItemsSource="{Binding ValuteList}"
                     SelectedItem="{Binding SecondValute}"
                     />
-            <Label Text="{Binding TextTo}"/>
-            <Label Text="{Binding ResultTranslation}" />
+            </Frame>
+            <Frame Margin="10">
+                <StackLayout>
+                    <Entry Text="{Binding ResultTranslation}" IsReadOnly="True" />
+                <Label Text="{Binding TextTo}"/>
+            </StackLayout>
+            </Frame>
         </StackLayout>
-        <DatePicker Date="{Binding CurrentDate}"></DatePicker>
+      
     </StackLayout>
 </ContentPage>

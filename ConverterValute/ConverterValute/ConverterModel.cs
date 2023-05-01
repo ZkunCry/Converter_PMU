@@ -52,16 +52,6 @@ namespace ConverterValute
             return ListValute;
         }
     }
-    class MyCustomHttpClientFactory : DefaultHttpClientFactory
-    {
-        public override HttpMessageHandler CreateMessageHandler()
-        {
-            return new HttpClientHandler
-            {
-                ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true
-            };
-        }
-    }
 }
 
    

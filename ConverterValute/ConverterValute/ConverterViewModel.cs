@@ -53,13 +53,13 @@ namespace ConverterValute
                 TextValuteCourse = "Sorry, but no courses found for this date";
                 return;
             }
-            TextValuteCourse = $"Курс на {data.Date:dd/MM/yyyy}";
-
+            TextValuteCourse = $"Курс на {data.Date:dd.MM.yyyy}";
             ValuteList.Clear();
             TextFrom = null;
             TextTo = null;
-
-           foreach(var item in data.Valute.Values)
+            ResultTranslation = null;
+            EntryMain = null;
+            foreach(var item in data.Valute.Values)
                 valuteList.Add(item);
  
         }
