@@ -22,7 +22,7 @@ namespace ConverterValute
             string date = null;
             string GetData = null;
 
-            for (DateTime newdate = currentDate; newdate<=DateTime.Now; newdate = newdate.AddDays(-1))
+            for (DateTime newdate = currentDate; newdate<=DateTime.Now &&ListValute == null ; newdate = newdate.AddDays(-1))
             {
                 date = $"{newdate:yyyy/MM/dd}".Replace(".", "//");
                 GetData = $"{Url}/archive/{date}/daily_json.js";
@@ -37,8 +37,6 @@ namespace ConverterValute
                         throw new Exception($"Error code: {exception.StatusCode}");
                     }
                 }
-                if (ListValute != null)
-                    break;
             }
             if (ListValute != null)
                 ListValute.Valute.Add("RUB", new Valute

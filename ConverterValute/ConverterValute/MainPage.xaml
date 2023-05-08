@@ -46,7 +46,7 @@
             </Frame>
             <Frame Margin="10">
                 <StackLayout>
-                    <Entry Text="{Binding ResultTranslation}" IsReadOnly="True" />
+                    <Entry Text="{Binding ResultTranslation}"  />
                 <Label Text="{Binding TextTo}"/>
             </StackLayout>
             </Frame>

@@ -2,17 +2,25 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Flurl.Http;
 namespace ConverterValute
 {
+    enum TypeCalc
+    {
+        FROM,
+        TO,
+        MAIN
+    }
     internal class ConverterViewModel : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
         private ConverterModel _Model = new ConverterModel();
         private DateTime currDate=DateTime.Now;
         private string _textValuteCourse;
+
         public string TextValuteCourse
         {
             get => _textValuteCourse;
@@ -25,6 +33,20 @@ namespace ConverterValute
                 }
             }
             
+        }
+
+        private ObservableCollection<Valute> valuteList = new ObservableCollection<Valute>();
+        public ObservableCollection<Valute> ValuteList
+        {
+            get => valuteList;
+            set
+            {
+                if (valuteList != value)
+                {
+                    valuteList = value;
+                    OnPropertyChanged(nameof(ValuteList));
+                }
+            }
         }
         public  ConverterViewModel()
         {
@@ -54,39 +76,51 @@ namespace ConverterValute
                 return;
             }
             TextValuteCourse = $"Курс на {data.Date:dd.MM.yyyy}";
+            var mainVal =  MainValute?.CharCode;
+          
+            var secondval = SecondValute?.CharCode;
             ValuteList.Clear();
-            TextFrom = null;
-            TextTo = null;
-            ResultTranslation = null;
-            EntryMain = null;
+
             foreach(var item in data.Valute.Values)
                 valuteList.Add(item);
- 
-        }
-        private void Translation()
-        {
-            if (MainValute == null || SecondValute == null)
-                return;
-            double.TryParse(_entryMain, out double result);
-            ResultTranslation = ((result * MainValute.Value) / SecondValute.Value).ToString();
-
-        }
-        private void  CalculateFrom()
-        {
-            if (MainValute == null || SecondValute == null)
+            if(!string.IsNullOrWhiteSpace(mainVal))
             {
-                TextFrom = "";
-                return;
+                MainValute = ValuteList.FirstOrDefault(value => value.CharCode == mainVal);
             }
-            var result = ((MainValute.Nominal * MainValute.Value) / SecondValute.Value).ToString();  
-            TextFrom=  $"{MainValute.Nominal} {MainValute.CharCode} = {result} {SecondValute.CharCode} ";
+            if (!string.IsNullOrWhiteSpace(secondval))
+            {
+                SecondValute = ValuteList.FirstOrDefault(value => value.CharCode == secondval);
+            }
+            Translation(TypeCalc.MAIN);
+     
 
-            CalculateTo();
         }
-        private void CalculateTo()
+        private void Translation( TypeCalc type)
         {
-            var result = ((SecondValute.Nominal * SecondValute.Value) / MainValute.Value).ToString();
-            TextTo = $"{SecondValute.Nominal} {SecondValute.CharCode} = {result} {MainValute.CharCode} ";
+            if (MainValute == null || SecondValute == null)
+                return;
+            double result;
+            string trans;
+            switch(type)
+            {
+                case TypeCalc.FROM:
+                    trans = ((MainValute.Nominal * MainValute.Value) / SecondValute.Value).ToString();
+                    TextFrom = $"{MainValute.Nominal} {MainValute.CharCode} = {trans} {SecondValute.CharCode} ";
+                    Translation(TypeCalc.TO);
+                    break;
+                case TypeCalc.MAIN:
+                    double.TryParse(_entryMain, out result);
+                    ResultTranslation = (result * MainValute.Value / SecondValute.Value).ToString();
+                    double.TryParse(ResultTranslation, out double result2);
+                    EntryMain = (result2 * SecondValute.Value / MainValute.Value).ToString();
+                    break;
+                case TypeCalc.TO:
+                    trans = ((SecondValute.Nominal * SecondValute.Value) / MainValute.Value).ToString();
+                    TextTo = $"{SecondValute.Nominal} {SecondValute.CharCode} = {trans} {MainValute.CharCode} ";
+                    
+                    break;
+            }
+            
         }
         private string _textfrom;
         public string TextFrom { get=>_textfrom; 
@@ -110,19 +144,7 @@ namespace ConverterValute
                 }
             } 
         }
-        private ObservableCollection<Valute> valuteList = new ObservableCollection<Valute>();
-        public ObservableCollection<Valute> ValuteList 
-        {
-            get => valuteList;
-            set
-            {
-                if(valuteList != value)
-                {
-                    valuteList = value;
-                    OnPropertyChanged(nameof(ValuteList));
-                }
-            }
-        }
+        
 
         private Valute _mainvalute;
         public Valute MainValute { get=> _mainvalute; 
@@ -133,9 +155,7 @@ namespace ConverterValute
                     _mainvalute = value;
                  
                     OnPropertyChanged(nameof(MainValute));
-                    Translation();
-                    CalculateFrom();
-                
+                    Translation(TypeCalc.FROM);
                 }
             }
         }
@@ -146,9 +166,7 @@ namespace ConverterValute
                 {
                     _secondvalute = value;
                     OnPropertyChanged(nameof(SecondValute));
-                    Translation();
-                    CalculateFrom();
-                    
+                    Translation(TypeCalc.FROM);
                 }
             } 
         }
@@ -159,7 +177,7 @@ namespace ConverterValute
                 if(_entryMain !=value)
                 {
                     _entryMain = value;
-                    Translation();
+                    Translation(TypeCalc.MAIN);
                     OnPropertyChanged(nameof(EntryMain));
                     
                 }
@@ -174,6 +192,7 @@ namespace ConverterValute
                 if (_resultTranslation != value)
                 {
                     _resultTranslation = value;
+                    Translation(TypeCalc.MAIN);
                     OnPropertyChanged(nameof(ResultTranslation));
                 }
             }
