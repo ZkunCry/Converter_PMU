@@ -57,6 +57,8 @@ namespace ConverterValute
             get { return currDate; }
             set { currDate = value; OnPropertyChanged(nameof(CurrentDate)); GetListValutes(); }
         }
+        private Dictionary<DateTime, ConverterViewModel> _Buffer = 
+            new Dictionary<DateTime, ConverterViewModel>();
         public async void GetListValutes()
         {
             ValuteData data = null;
@@ -75,32 +77,37 @@ namespace ConverterValute
                 TextValuteCourse = "Sorry, but no courses found for this date";
                 return;
             }
+
             TextValuteCourse = $"Курс на {data.Date:dd.MM.yyyy}";
+
             var mainVal =  MainValute?.CharCode;
-          
             var secondval = SecondValute?.CharCode;
             ValuteList.Clear();
-
             foreach(var item in data.Valute.Values)
                 valuteList.Add(item);
+
             if(!string.IsNullOrWhiteSpace(mainVal))
-            {
                 MainValute = ValuteList.FirstOrDefault(value => value.CharCode == mainVal);
-            }
             if (!string.IsNullOrWhiteSpace(secondval))
-            {
                 SecondValute = ValuteList.FirstOrDefault(value => value.CharCode == secondval);
-            }
             Translation(TypeCalc.MAIN);
-     
+            SaveData();
+
+        }
+        private void SaveData()
+        {
+             var temp = (ConverterViewModel)MemberwiseClone();
+            _Buffer.Add(CurrentDate,temp);
 
         }
         private void Translation( TypeCalc type)
         {
             if (MainValute == null || SecondValute == null)
                 return;
+
             double result;
             string trans;
+
             switch(type)
             {
                 case TypeCalc.FROM:
