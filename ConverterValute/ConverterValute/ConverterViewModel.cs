@@ -61,6 +61,26 @@ namespace ConverterValute
             new Dictionary<DateTime, ConverterViewModel>();
         public async void GetListValutes()
         {
+            if(_Buffer.Count > 0)
+            {
+                if(_Buffer.ContainsKey(CurrentDate))
+                {
+                    var temp = _Buffer[currDate];
+                    ValuteList = temp.ValuteList;
+                    if (!string.IsNullOrWhiteSpace(temp.MainValute.CharCode))
+                        MainValute = ValuteList.FirstOrDefault(value => value.CharCode == temp.MainValute.CharCode);
+                    if (!string.IsNullOrWhiteSpace(temp.SecondValute.CharCode))
+                        SecondValute = ValuteList.FirstOrDefault(value => value.CharCode == temp.SecondValute.CharCode);
+                    EntryMain = temp.EntryMain;
+                    
+                    ResultTranslation = temp.ResultTranslation;
+                    TextFrom = temp.TextFrom;
+                    TextTo = temp.TextTo;
+ 
+                    return;
+                }
+               
+            }
             ValuteData data = null;
             try { data = await _Model.GetDateAsync(currDate); }
                 
@@ -97,7 +117,10 @@ namespace ConverterValute
         private void SaveData()
         {
              var temp = (ConverterViewModel)MemberwiseClone();
-            _Buffer.Add(CurrentDate,temp);
+            if (_Buffer.ContainsKey(currDate))
+                _Buffer[currDate] = temp;
+            else
+                _Buffer.Add(CurrentDate,temp);
 
         }
         private void Translation( TypeCalc type)
@@ -118,8 +141,8 @@ namespace ConverterValute
                 case TypeCalc.MAIN:
                     double.TryParse(_entryMain, out result);
                     ResultTranslation = (result * MainValute.Value / SecondValute.Value).ToString();
-                    double.TryParse(ResultTranslation, out double result2);
-                    EntryMain = (result2 * SecondValute.Value / MainValute.Value).ToString();
+                    /*double.TryParse(ResultTranslation, out double result2);
+                    EntryMain = (result2 * SecondValute.Value / MainValute.Value).ToString();*/
                     break;
                 case TypeCalc.TO:
                     trans = ((SecondValute.Nominal * SecondValute.Value) / MainValute.Value).ToString();
@@ -127,6 +150,7 @@ namespace ConverterValute
                     
                     break;
             }
+            SaveData();
             
         }
         private string _textfrom;
@@ -162,6 +186,7 @@ namespace ConverterValute
                     _mainvalute = value;
                  
                     OnPropertyChanged(nameof(MainValute));
+                    Translation(TypeCalc.MAIN);
                     Translation(TypeCalc.FROM);
                 }
             }
@@ -173,6 +198,7 @@ namespace ConverterValute
                 {
                     _secondvalute = value;
                     OnPropertyChanged(nameof(SecondValute));
+                    Translation(TypeCalc.MAIN);
                     Translation(TypeCalc.FROM);
                 }
             } 
@@ -199,7 +225,7 @@ namespace ConverterValute
                 if (_resultTranslation != value)
                 {
                     _resultTranslation = value;
-                    Translation(TypeCalc.MAIN);
+                   /* Translation(TypeCalc.MAIN);*/
                     OnPropertyChanged(nameof(ResultTranslation));
                 }
             }
