@@ -57,8 +57,8 @@ namespace ConverterValute
             get { return currDate; }
             set { currDate = value; OnPropertyChanged(nameof(CurrentDate)); GetListValutes(); }
         }
-        private Dictionary<DateTime, ConverterViewModel> _Buffer = 
-            new Dictionary<DateTime, ConverterViewModel>();
+        private Dictionary<DateTime, ObservableCollection<Valute>> _Buffer = 
+            new Dictionary<DateTime, ObservableCollection<Valute>>();
         public async void GetListValutes()
         {
             if(_Buffer.Count > 0)
@@ -66,17 +66,15 @@ namespace ConverterValute
                 if(_Buffer.ContainsKey(CurrentDate))
                 {
                     var temp = _Buffer[currDate];
-                    ValuteList = temp.ValuteList;
-                    if (!string.IsNullOrWhiteSpace(temp.MainValute.CharCode))
-                        MainValute = ValuteList.FirstOrDefault(value => value.CharCode == temp.MainValute.CharCode);
-                    if (!string.IsNullOrWhiteSpace(temp.SecondValute.CharCode))
-                        SecondValute = ValuteList.FirstOrDefault(value => value.CharCode == temp.SecondValute.CharCode);
-                    EntryMain = temp.EntryMain;
-                    
-                    ResultTranslation = temp.ResultTranslation;
-                    TextFrom = temp.TextFrom;
-                    TextTo = temp.TextTo;
- 
+                    var mainv = MainValute?.CharCode;
+                    var secondv = SecondValute?.CharCode;
+                    ValuteList.Clear();
+                    ValuteList = temp;
+                    if (!string.IsNullOrWhiteSpace(mainv))
+                        MainValute = ValuteList.FirstOrDefault(value => value.CharCode == mainv);
+                    if (!string.IsNullOrWhiteSpace(secondv))
+                        SecondValute = ValuteList.FirstOrDefault(value => value.CharCode == secondv);
+                  
                     return;
                 }
                
@@ -110,17 +108,17 @@ namespace ConverterValute
                 MainValute = ValuteList.FirstOrDefault(value => value.CharCode == mainVal);
             if (!string.IsNullOrWhiteSpace(secondval))
                 SecondValute = ValuteList.FirstOrDefault(value => value.CharCode == secondval);
-            Translation(TypeCalc.MAIN);
+            
             SaveData();
 
         }
         private void SaveData()
         {
-             var temp = (ConverterViewModel)MemberwiseClone();
+            var temp = new ObservableCollection<Valute>(ValuteList.Select(value => value));
             if (_Buffer.ContainsKey(currDate))
                 _Buffer[currDate] = temp;
             else
-                _Buffer.Add(CurrentDate,temp);
+                _Buffer.Add(CurrentDate, temp);
 
         }
         private void Translation( TypeCalc type)
