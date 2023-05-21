@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Flurl.Http;
 namespace ConverterValute
 {
@@ -17,8 +15,11 @@ namespace ConverterValute
     internal class ConverterViewModel : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
+
         private ConverterModel _Model = new ConverterModel();
+
         private DateTime currDate=DateTime.Now;
+
         private string _textValuteCourse;
 
         public string TextValuteCourse
@@ -35,7 +36,11 @@ namespace ConverterValute
             
         }
 
-        private ObservableCollection<Valute> valuteList = new ObservableCollection<Valute>();
+        private ObservableCollection<Valute> valuteList = 
+            new ObservableCollection<Valute>();
+
+        private Dictionary<DateTime, ObservableCollection<Valute>> _Buffer =
+            new Dictionary<DateTime, ObservableCollection<Valute>>();
         public ObservableCollection<Valute> ValuteList
         {
             get => valuteList;
@@ -57,24 +62,25 @@ namespace ConverterValute
             get { return currDate; }
             set { currDate = value; OnPropertyChanged(nameof(CurrentDate)); GetListValutes(); }
         }
-        private Dictionary<DateTime, ObservableCollection<Valute>> _Buffer = 
-            new Dictionary<DateTime, ObservableCollection<Valute>>();
+
+        private void CopyData(string first,string last)
+        {
+            if (!string.IsNullOrWhiteSpace(first))
+                MainValute = ValuteList.FirstOrDefault(value => value.CharCode == first);
+            if (!string.IsNullOrWhiteSpace(last))
+                SecondValute = ValuteList.FirstOrDefault(value => value.CharCode == last);
+        }
         public async void GetListValutes()
         {
             if(_Buffer.Count > 0)
             {
                 if(_Buffer.ContainsKey(CurrentDate))
                 {
-                    var temp = _Buffer[currDate];
                     var mainv = MainValute?.CharCode;
                     var secondv = SecondValute?.CharCode;
                     ValuteList.Clear();
-                    ValuteList = temp;
-                    if (!string.IsNullOrWhiteSpace(mainv))
-                        MainValute = ValuteList.FirstOrDefault(value => value.CharCode == mainv);
-                    if (!string.IsNullOrWhiteSpace(secondv))
-                        SecondValute = ValuteList.FirstOrDefault(value => value.CharCode == secondv);
-                  
+                    ValuteList = _Buffer[currDate];
+                    CopyData(mainv,secondv);
                     return;
                 }
                
@@ -103,12 +109,7 @@ namespace ConverterValute
             ValuteList.Clear();
             foreach(var item in data.Valute.Values)
                 valuteList.Add(item);
-
-            if(!string.IsNullOrWhiteSpace(mainVal))
-                MainValute = ValuteList.FirstOrDefault(value => value.CharCode == mainVal);
-            if (!string.IsNullOrWhiteSpace(secondval))
-                SecondValute = ValuteList.FirstOrDefault(value => value.CharCode == secondval);
-            
+            CopyData(mainVal, secondval);
             SaveData();
 
         }
@@ -139,8 +140,6 @@ namespace ConverterValute
                 case TypeCalc.MAIN:
                     double.TryParse(_entryMain, out result);
                     ResultTranslation = (result * MainValute.Value / SecondValute.Value).ToString();
-                    /*double.TryParse(ResultTranslation, out double result2);
-                    EntryMain = (result2 * SecondValute.Value / MainValute.Value).ToString();*/
                     break;
                 case TypeCalc.TO:
                     trans = ((SecondValute.Nominal * SecondValute.Value) / MainValute.Value).ToString();
@@ -223,16 +222,11 @@ namespace ConverterValute
                 if (_resultTranslation != value)
                 {
                     _resultTranslation = value;
-                   /* Translation(TypeCalc.MAIN);*/
                     OnPropertyChanged(nameof(ResultTranslation));
                 }
             }
         }
-
-
-        public void OnPropertyChanged(string prop)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
-        }
+        public void OnPropertyChanged(string prop)=>PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
+        
     }
 }

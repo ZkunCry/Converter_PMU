@@ -28,3 +28,18 @@ C:\конвертер\Converter_PMU\ConverterValute\ConverterValute\obj\Debug\ne
 C:\конвертер\Converter_PMU\ConverterValute\ConverterValute\obj\Debug\netstandard2.0\refint\ConverterValute.dll
 C:\конвертер\Converter_PMU\ConverterValute\ConverterValute\obj\Debug\netstandard2.0\ConverterValute.pdb
 C:\конвертер\Converter_PMU\ConverterValute\ConverterValute\obj\Debug\netstandard2.0\ref\ConverterValute.dll
+C:\git repos\Converter\ConverterValute\ConverterValute\bin\Debug\netstandard2.0\ConverterValute.deps.json
+C:\git repos\Converter\ConverterValute\ConverterValute\bin\Debug\netstandard2.0\ConverterValute.dll
+C:\git repos\Converter\ConverterValute\ConverterValute\bin\Debug\netstandard2.0\ref\ConverterValute.dll
+C:\git repos\Converter\ConverterValute\ConverterValute\bin\Debug\netstandard2.0\ConverterValute.pdb
+C:\git repos\Converter\ConverterValute\ConverterValute\obj\Debug\netstandard2.0\ConverterValute.csproj.AssemblyReference.cache
+C:\git repos\Converter\ConverterValute\ConverterValute\obj\Debug\netstandard2.0\ConverterValute.GeneratedMSBuildEditorConfig.editorconfig
+C:\git repos\Converter\ConverterValute\ConverterValute\obj\Debug\netstandard2.0\App.xaml.g.cs
+C:\git repos\Converter\ConverterValute\ConverterValute\obj\Debug\netstandard2.0\MainPage.xaml.g.cs
+C:\git repos\Converter\ConverterValute\ConverterValute\obj\Debug\netstandard2.0\ConverterValute.AssemblyInfoInputs.cache
+C:\git repos\Converter\ConverterValute\ConverterValute\obj\Debug\netstandard2.0\ConverterValute.AssemblyInfo.cs
+C:\git repos\Converter\ConverterValute\ConverterValute\obj\Debug\netstandard2.0\ConverterValute.csproj.CoreCompileInputs.cache
+C:\git repos\Converter\ConverterValute\ConverterValute\obj\Debug\netstandard2.0\XamlC.stamp
+C:\git repos\Converter\ConverterValute\ConverterValute\obj\Debug\netstandard2.0\ConverterValute.dll
+C:\git repos\Converter\ConverterValute\ConverterValute\obj\Debug\netstandard2.0\ref\ConverterValute.dll
+C:\git repos\Converter\ConverterValute\ConverterValute\obj\Debug\netstandard2.0\ConverterValute.pdb

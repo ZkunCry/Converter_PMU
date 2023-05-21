@@ -1,21 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 using Flurl.Http;
-using Flurl.Http.Configuration;
 
 namespace ConverterValute
 {
     class ConverterModel
     {
         private const string Url = "https://www.cbr-xml-daily.ru";
-        public ConverterModel()
-        {
-            FlurlHttp.ConfigureClient(Url,
-                settings => settings.Settings.HttpClientFactory = new MyCustomHttpClientFactory());
-        }
+
         public async Task<ValuteData> GetDateAsync(DateTime currentDate)
         {
             ValuteData ListValute = null;
